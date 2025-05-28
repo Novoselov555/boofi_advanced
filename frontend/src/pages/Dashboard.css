@@ -1,0 +1,35 @@
+.dashboard-container {
+    max-width: 600px;
+    margin: 80px auto;
+    padding: 32px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.dashboard-container h2 {
+    margin-bottom: 16px;
+    font-size: 1.6em;
+    color: #333;
+}
+
+.dashboard-container p {
+    margin-bottom: 24px;
+    color: #666;
+}
+
+.dashboard-logout {
+    padding: 10px 20px;
+    background: #e74c3c;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.dashboard-logout:hover {
+    opacity: 0.9;
+}

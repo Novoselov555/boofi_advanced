@@ -26,7 +26,7 @@ public class AuthService {
         User admin = new User();
         admin.setName("admin");
         admin.setEmail("admin@boofi.com");
-        admin.setPassword("admin123");
+        admin.setPassword(passwordEncoder.encode("admin123"));
         admin.setRole(Role.ADMIN);
         userRepository.save(admin);
     }
