@@ -54,12 +54,12 @@ public class AuthControllerIntegrationTest extends DataBaseConnect {
         String decodedPassword = decodedCredentials.split(":")[1];
 
         assertEquals("efim@mail.ru", decodedEmail, "Почты не совпадают");
-        assertTrue(passwordEncoder.matches("123", decodedPassword), "Пароли не совпадают");
+        assertEquals("123", decodedPassword, "Пароли не совпадают");
     }
 
     @Test
     public void testRegisterAlreadyExistingUser() {
-        User user = new User(null,"efim", "efim@mail.ru", "123", Role.USER);
+        User user = new User(null,"efim", "efim@mail.ru", "123", true, Role.USER);
         userRepository.save(user);
 
         RegisterRequest registerRequest = new RegisterRequest("efim", "efim@mail.ru", "123");
@@ -70,7 +70,7 @@ public class AuthControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testLoginUser() {
-        User user = new User(null,"efim", "efim@mail.ru", passwordEncoder.encode("123"), Role.USER);
+        User user = new User(null,"efim", "efim@mail.ru", passwordEncoder.encode("123"), true, Role.USER);
         userRepository.save(user);
 
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
@@ -85,12 +85,12 @@ public class AuthControllerIntegrationTest extends DataBaseConnect {
         String decodedPassword = decodedCredentials.split(":")[1];
 
         assertEquals("efim@mail.ru", decodedEmail, "Почты не совпадают");
-        assertTrue(passwordEncoder.matches("123", decodedPassword), "Пароли не совпадают");
+        assertEquals("123", decodedPassword, "Пароли не совпадают");
     }
 
     @Test
     public void testLoginIncorrectPassword() {
-        User user = new User(null,"efim", "efim@mail.ru", passwordEncoder.encode("1234"), Role.USER);
+        User user = new User(null,"efim", "efim@mail.ru", passwordEncoder.encode("1234"), true, Role.USER);
         userRepository.save(user);
 
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
@@ -104,6 +104,6 @@ public class AuthControllerIntegrationTest extends DataBaseConnect {
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
         ResponseEntity<Map> response = testRestTemplate.postForEntity("/auth/login", loginRequest, Map.class);
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode(), "Статусы не совпадают");
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode(), "Статусы не совпадают");
     }
 }

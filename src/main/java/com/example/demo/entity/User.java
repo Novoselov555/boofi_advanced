@@ -23,6 +23,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private boolean authenticated;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;

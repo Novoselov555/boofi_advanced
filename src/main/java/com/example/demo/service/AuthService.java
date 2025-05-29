@@ -20,7 +20,6 @@ import java.util.Base64;
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
     @PostConstruct
     public void init() {
         User admin = new User();
@@ -28,6 +27,7 @@ public class AuthService {
         admin.setEmail("admin@boofi.com");
         admin.setPassword(passwordEncoder.encode("admin123"));
         admin.setRole(Role.ADMIN);
+        admin.setAuthenticated(true);
         userRepository.save(admin);
     }
 
@@ -40,22 +40,24 @@ public class AuthService {
         user.setName(registerRequest.getName());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setAuthenticated(true);
         user.setRole(Role.USER);
         userRepository.save(user);
 
-        String credentials = user.getEmail() + ":" + user.getPassword();
+        String credentials = user.getEmail() + ":" + registerRequest.getPassword();
         return Base64.getEncoder().encodeToString(credentials.getBytes());
     }
 
     public String login(LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("Пользователя с такой почтой еще нет"));
+                .orElseThrow(() -> new IncorrectCredentialsException("Неверный логин или пароль"));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new IncorrectCredentialsException("Неверный пароль");
+            throw new IncorrectCredentialsException("Неверный логин или пароль");
         }
 
-        String credentials = user.getEmail() + ":" + user.getPassword();
+        String credentials = user.getEmail() + ":" + loginRequest.getPassword();
+        user.setAuthenticated(true);
         return Base64.getEncoder().encodeToString(credentials.getBytes());
     }
 }

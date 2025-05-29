@@ -35,13 +35,15 @@ class AuthServiceTest {
 
     @Test
     public void testInitAdmin() {
+        Mockito.when(passwordEncoder.encode("admin123")).thenReturn("encodedAdmin");
         authService.init();
         Mockito.verify(userRepository)
                 .save(Mockito.argThat(user ->
                         "admin".equals(user.getName()) &&
                                 "admin@boofi.com".equals(user.getEmail()) &&
-                                "admin123".equals(user.getPassword()) &&
-                                Role.ADMIN.equals(user.getRole())
+                                "encodedAdmin".equals(user.getPassword()) &&
+                                Role.ADMIN.equals(user.getRole()) &&
+                                user.isAuthenticated()
                 ));
     }
 
@@ -57,7 +59,7 @@ class AuthServiceTest {
     public void testLoginNonExistingUser() {
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
         Mockito.when(userRepository.findByEmail("efim@mail.ru")).thenReturn(Optional.empty());
-        assertThrows(UserNotFoundException.class,
+        assertThrows(IncorrectCredentialsException.class,
                 () -> authService.login(loginRequest));
     }
 
@@ -66,15 +68,15 @@ class AuthServiceTest {
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
 
         User stored = new User(
-            null,
-            "efim",
-            "efim@mail.ru",
-            "encodedPw",
-            Role.USER
+                null,
+                "efim",
+                "efim@mail.ru",
+                "encodedPw",
+                false,
+                Role.USER
         );
 
         Mockito.when(userRepository.findByEmail("efim@mail.ru")).thenReturn(Optional.of(stored));
-
         Mockito.when(passwordEncoder.matches("123", "encodedPw")).thenReturn(false);
 
         assertThrows(IncorrectCredentialsException.class,
@@ -91,13 +93,14 @@ class AuthServiceTest {
         String creds = authService.register(registerRequest);
 
         Mockito.verify(userRepository).save(Mockito.argThat(user ->
-            "efim".equals(user.getName()) &&
-                    "efim@mail.ru".equals(user.getEmail()) &&
-                    "encoded123".equals(user.getPassword()) &&
-                    Role.USER.equals(user.getRole())
+                "efim".equals(user.getName()) &&
+                        "efim@mail.ru".equals(user.getEmail()) &&
+                        "encoded123".equals(user.getPassword()) &&
+                        user.isAuthenticated() &&
+                        Role.USER.equals(user.getRole())
         ));
 
-        String expected = Base64.getEncoder().encodeToString("efim@mail.ru:encoded123".getBytes());
+        String expected = Base64.getEncoder().encodeToString("efim@mail.ru:123".getBytes());
         assertEquals(expected, creds);
     }
 
@@ -110,11 +113,11 @@ class AuthServiceTest {
                 "efim",
                 "efim@mail.ru",
                 "encoded123",
+                true,
                 Role.USER
         );
 
         Mockito.when(userRepository.findByEmail("efim@mail.ru")).thenReturn(Optional.of(stored));
-
         Mockito.when(passwordEncoder.matches("123", "encoded123")).thenReturn(true);
 
         String creds = authService.login(loginRequest);
@@ -122,7 +125,7 @@ class AuthServiceTest {
         Mockito.verify(userRepository).findByEmail("efim@mail.ru");
         Mockito.verify(passwordEncoder).matches("123", "encoded123");
 
-        String expected = Base64.getEncoder().encodeToString("efim@mail.ru:encoded123".getBytes());
+        String expected = Base64.getEncoder().encodeToString("efim@mail.ru:123".getBytes());
         assertEquals(expected, creds);
     }
 }
