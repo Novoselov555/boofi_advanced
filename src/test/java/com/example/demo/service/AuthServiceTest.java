@@ -1,13 +1,11 @@
 package com.example.demo.service;
 
-
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 import com.example.demo.exception.IncorrectCredentialsException;
 import com.example.demo.exception.UserAlreadyExistsException;
-import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +15,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,7 +48,7 @@ class AuthServiceTest {
     }
 
     @Test
-    public void testRegisterAlreadyExistingUser() {
+    public void testRegister_UserExists() {
         RegisterRequest registerRequest = new RegisterRequest("efim", "efim@mail.ru", "123");
         Mockito.when(userRepository.existsByEmail("efim@mail.ru")).thenReturn(true);
         assertThrows(UserAlreadyExistsException.class,
@@ -56,7 +56,7 @@ class AuthServiceTest {
     }
 
     @Test
-    public void testLoginNonExistingUser() {
+    public void testLogin_UserNotFound() {
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
         Mockito.when(userRepository.findByEmail("efim@mail.ru")).thenReturn(Optional.empty());
         assertThrows(IncorrectCredentialsException.class,
@@ -64,16 +64,18 @@ class AuthServiceTest {
     }
 
     @Test
-    public void testLoginIncorrectPassword() {
+    public void testLogin_IncorrectPassword() {
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
 
         User stored = new User(
-                null,
+                1L,
                 "efim",
                 "efim@mail.ru",
                 "encodedPw",
                 false,
-                Role.USER
+                Role.USER,
+                new ArrayList<>(),
+                new ArrayList<>()
         );
 
         Mockito.when(userRepository.findByEmail("efim@mail.ru")).thenReturn(Optional.of(stored));
@@ -90,7 +92,7 @@ class AuthServiceTest {
         Mockito.when(userRepository.existsByEmail("efim@mail.ru")).thenReturn(false);
         Mockito.when(passwordEncoder.encode("123")).thenReturn("encoded123");
 
-        String creds = authService.register(registerRequest);
+        HashMap<String, String> data = authService.register(registerRequest);
 
         Mockito.verify(userRepository).save(Mockito.argThat(user ->
                 "efim".equals(user.getName()) &&
@@ -100,8 +102,9 @@ class AuthServiceTest {
                         Role.USER.equals(user.getRole())
         ));
 
-        String expected = Base64.getEncoder().encodeToString("efim@mail.ru:123".getBytes());
-        assertEquals(expected, creds);
+        String expectedToken = Base64.getEncoder().encodeToString("efim@mail.ru:123".getBytes());
+        assertEquals(expectedToken, data.get("token"));
+        assertEquals(String.valueOf(Role.USER), data.get("role"));
     }
 
     @Test
@@ -109,23 +112,27 @@ class AuthServiceTest {
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
 
         User stored = new User(
-                null,
+                42L,
                 "efim",
                 "efim@mail.ru",
                 "encoded123",
                 true,
-                Role.USER
+                Role.USER,
+                new ArrayList<>(),
+                new ArrayList<>()
         );
 
         Mockito.when(userRepository.findByEmail("efim@mail.ru")).thenReturn(Optional.of(stored));
         Mockito.when(passwordEncoder.matches("123", "encoded123")).thenReturn(true);
 
-        String creds = authService.login(loginRequest);
+        HashMap<String, String> data = authService.login(loginRequest);
 
         Mockito.verify(userRepository).findByEmail("efim@mail.ru");
         Mockito.verify(passwordEncoder).matches("123", "encoded123");
 
-        String expected = Base64.getEncoder().encodeToString("efim@mail.ru:123".getBytes());
-        assertEquals(expected, creds);
+        String expectedToken = Base64.getEncoder().encodeToString("efim@mail.ru:123".getBytes());
+        assertEquals(expectedToken, data.get("token"));
+        assertEquals(String.valueOf(Role.USER), data.get("role"));
+        assertEquals("42", data.get("id"));
     }
 }

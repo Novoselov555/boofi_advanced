@@ -13,8 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,10 +43,10 @@ public class UserControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testUpdateUser_Success() {
-        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER);
+        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
         user = userRepository.save(user);
 
-        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", true, Role.USER);
+        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", true, Role.USER, new ArrayList<>(), new ArrayList<>());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", buildAuthHeader("egor@mail.ru", "123"));
@@ -59,10 +59,10 @@ public class UserControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testUpdateUser_InvalidPassword() {
-        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER);
+        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
         user = userRepository.save(user);
 
-        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", true, Role.USER);
+        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", true, Role.USER, new ArrayList<>(), new ArrayList<>());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", buildAuthHeader("egor@mail.ru", "wrongpass"));
@@ -74,10 +74,10 @@ public class UserControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testUpdateUser_NotAuthenticated() {
-        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), false, Role.USER);
+        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), false, Role.USER, new ArrayList<>(), new ArrayList<>());
         user = userRepository.save(user);
 
-        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", false, Role.USER);
+        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", false, Role.USER, new ArrayList<>(), new ArrayList<>());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", buildAuthHeader("egor@mail.ru", "123"));
@@ -89,12 +89,12 @@ public class UserControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testUpdateUser_OtherUserId() {
-        User user1 = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER);
+        User user1 = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
         user1 = userRepository.save(user1);
-        User user2 = new User(null, "petr", "petr@mail.ru", passwordEncoder.encode("321"), true, Role.USER);
+        User user2 = new User(null, "petr", "petr@mail.ru", passwordEncoder.encode("321"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
         user2 = userRepository.save(user2);
 
-        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", true, Role.USER);
+        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", true, Role.USER, new ArrayList<>(), new ArrayList<>());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", buildAuthHeader("egor@mail.ru", "123"));
@@ -106,7 +106,7 @@ public class UserControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testUpdateUser_UserNotExists() {
-        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", true, Role.USER);
+        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", true, Role.USER, new ArrayList<>(), new ArrayList<>());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", buildAuthHeader("egor@mail.ru", "123"));
@@ -118,7 +118,7 @@ public class UserControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testDeleteUser_Success() {
-        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER);
+        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
         user = userRepository.save(user);
 
         HttpHeaders headers = new HttpHeaders();
@@ -132,9 +132,9 @@ public class UserControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testDeleteUser_OtherUserId() {
-        User user1 = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER);
+        User user1 = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
         user1 = userRepository.save(user1);
-        User user2 = new User(null, "petr", "petr@mail.ru", passwordEncoder.encode("321"), true, Role.USER);
+        User user2 = new User(null, "petr", "petr@mail.ru", passwordEncoder.encode("321"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
         user2 = userRepository.save(user2);
 
         HttpHeaders headers = new HttpHeaders();
@@ -147,7 +147,7 @@ public class UserControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testDeleteUser_NotAuthenticated() {
-        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), false, Role.USER);
+        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), false, Role.USER, new ArrayList<>(), new ArrayList<>());
         user = userRepository.save(user);
 
         HttpHeaders headers = new HttpHeaders();

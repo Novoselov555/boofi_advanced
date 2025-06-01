@@ -6,7 +6,6 @@ import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 import com.example.demo.exception.IncorrectCredentialsException;
 import com.example.demo.exception.UserAlreadyExistsException;
-import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
@@ -14,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
+import java.util.HashMap;
 
 @Service
 @AllArgsConstructor
@@ -31,7 +31,14 @@ public class AuthService {
         userRepository.save(admin);
     }
 
-    public String register(RegisterRequest registerRequest) {
+    public HashMap<String, String> getIdAndRole(User user) {
+        HashMap<String, String> data = new HashMap<>();
+        data.put("id", String.valueOf(user.getId()));
+        data.put("role", String.valueOf(user.getRole()));
+        return data;
+    }
+
+    public HashMap<String, String> register(RegisterRequest registerRequest) {
         if (userRepository.existsByEmail(registerRequest.getEmail())){
             throw new UserAlreadyExistsException("Пользователь с такой почтой уже существует");
         }
@@ -44,20 +51,29 @@ public class AuthService {
         user.setRole(Role.USER);
         userRepository.save(user);
 
+        HashMap<String, String> data = getIdAndRole(user);
+
         String credentials = user.getEmail() + ":" + registerRequest.getPassword();
-        return Base64.getEncoder().encodeToString(credentials.getBytes());
+        String token = Base64.getEncoder().encodeToString(credentials.getBytes());
+        data.put("token", token);
+
+        return data;
     }
 
-    public String login(LoginRequest loginRequest) {
+    public HashMap<String, String> login(LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new IncorrectCredentialsException("Неверный логин или пароль"));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new IncorrectCredentialsException("Неверный логин или пароль");
         }
-
-        String credentials = user.getEmail() + ":" + loginRequest.getPassword();
         user.setAuthenticated(true);
-        return Base64.getEncoder().encodeToString(credentials.getBytes());
+
+        HashMap<String, String> data = getIdAndRole(user);
+        String credentials = user.getEmail() + ":" + loginRequest.getPassword();
+        String token = Base64.getEncoder().encodeToString(credentials.getBytes());
+        data.put("token", token);
+
+        return data;
     }
 }

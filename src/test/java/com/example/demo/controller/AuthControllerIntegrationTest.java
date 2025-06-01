@@ -17,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class AuthControllerIntegrationTest extends DataBaseConnect {
 
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Статусы отличаются");
 
-        String credentials = (String) response.getBody().get("credentials");
+        String credentials = (String) response.getBody().get("token");
 
         String decodedCredentials = new String(Base64.getDecoder().decode(credentials));
         String decodedEmail = decodedCredentials.split(":")[0];
@@ -59,7 +60,7 @@ public class AuthControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testRegisterAlreadyExistingUser() {
-        User user = new User(null,"efim", "efim@mail.ru", "123", true, Role.USER);
+        User user = new User(null,"efim", "efim@mail.ru", "123", true, Role.USER, new ArrayList<>(), new ArrayList<>());
         userRepository.save(user);
 
         RegisterRequest registerRequest = new RegisterRequest("efim", "efim@mail.ru", "123");
@@ -70,7 +71,7 @@ public class AuthControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testLoginUser() {
-        User user = new User(null,"efim", "efim@mail.ru", passwordEncoder.encode("123"), true, Role.USER);
+        User user = new User(null,"efim", "efim@mail.ru", passwordEncoder.encode("123"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
         userRepository.save(user);
 
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
@@ -78,7 +79,7 @@ public class AuthControllerIntegrationTest extends DataBaseConnect {
 
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Статусы не совпадают");
 
-        String credentials = (String) response.getBody().get("credentials");
+        String credentials = (String) response.getBody().get("token");
 
         String decodedCredentials = new String(Base64.getDecoder().decode(credentials));
         String decodedEmail = decodedCredentials.split(":")[0];
@@ -90,7 +91,7 @@ public class AuthControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testLoginIncorrectPassword() {
-        User user = new User(null,"efim", "efim@mail.ru", passwordEncoder.encode("1234"), true, Role.USER);
+        User user = new User(null,"efim", "efim@mail.ru", passwordEncoder.encode("1234"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
         userRepository.save(user);
 
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");

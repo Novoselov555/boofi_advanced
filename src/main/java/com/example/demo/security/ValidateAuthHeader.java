@@ -1,13 +1,10 @@
 package com.example.demo.security;
 
+import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 import com.example.demo.exception.IncorrectCredentialsException;
-import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -19,25 +16,10 @@ public class ValidateAuthHeader {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void isValid(String authHeader, Long id) throws UserNotFoundException {
-        String[] parts = getCreds(authHeader);
-        String email = extractEmail(parts);
-        String encodedPassword = extractPassword(parts);
+    public Long isValid(String authHeader) throws IncorrectCredentialsException {
+        User user = checkCreds(authHeader);
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IncorrectCredentialsException("Не аутентифицированные действия!"));
-
-        if (!user.getId().equals(id)) {
-            throw new IncorrectCredentialsException("Не аутентифицированные действия!");
-        }
-
-        if (!passwordEncoder.matches(encodedPassword, user.getPassword())) {
-            throw new IncorrectCredentialsException("Не аутентифицированные действия!");
-        }
-
-        if (!user.isAuthenticated()) {
-            throw new IncorrectCredentialsException("Не аутентифицированные действия!");
-        }
+        return user.getId();
     }
 
     public String extractEmail(String[] parts) {
@@ -48,7 +30,26 @@ public class ValidateAuthHeader {
         return parts[1];
     }
 
-    public String[] getCreds(String authHeader) {
+    // Проверка того, что человек есть в БД и он не аутентифицирован
+    public User checkCreds(String authHeader) {
+        String[] parts = getCreds(authHeader);
+        String email = extractEmail(parts);
+        String encodedPassword = extractPassword(parts);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IncorrectCredentialsException("Не аутентифицированные действия!"));
+
+        if (!passwordEncoder.matches(encodedPassword, user.getPassword())) {
+            throw new IncorrectCredentialsException("Не аутентифицированные действия!");
+        }
+
+        if (!user.isAuthenticated()) {
+            throw new IncorrectCredentialsException("Не аутентифицированные действия!");
+        }
+        return user;
+    }
+
+    public String[] getCreds(String authHeader) throws IncorrectCredentialsException{
         if (authHeader == null || !authHeader.startsWith("Basic ")) {
             throw new IncorrectCredentialsException("Не аутентифицированные действия!");
         }
@@ -57,5 +58,14 @@ public class ValidateAuthHeader {
         String[] parts = decodedHeader.split(":");
         if (parts.length < 2) throw new IncorrectCredentialsException("Неверный токен");
         return parts;
+    }
+
+    public void isAdminValid(String authHeader) throws IncorrectCredentialsException{
+        User user = checkCreds(authHeader);
+
+        if (user.getRole() != Role.ADMIN) {
+            throw new IncorrectCredentialsException("Не аутентифицированные действия!");
+
+        }
     }
 }

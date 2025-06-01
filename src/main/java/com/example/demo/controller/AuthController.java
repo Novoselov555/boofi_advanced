@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -26,25 +26,26 @@ public class AuthController {
     @Operation(summary = "Регистрация пользователя")
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@RequestBody RegisterRequest registerRequest) {
-        String credentials = authService.register(registerRequest);
+        HashMap<String, String> response = authService.register(registerRequest);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Basic " + credentials);
+        headers.add("Authorization", "Basic " + response.get("token"));
+
         return ResponseEntity
                 .ok()
                 .headers(headers)
-                .body(Collections.singletonMap("credentials", credentials));
-
+                .body(response);
     }
 
     @Operation(summary = "Аутентификация пользователя")
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
-        String credentials = authService.login(loginRequest);
+        HashMap<String, String> response = authService.login(loginRequest);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Basic " + credentials);
+        headers.add("Authorization", "Basic " + response.get("token"));
+
         return ResponseEntity
                 .ok()
                 .headers(headers)
-                .body(Collections.singletonMap("credentials", credentials));
+                .body(response);
     }
 }

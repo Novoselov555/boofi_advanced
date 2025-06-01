@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,7 +28,7 @@ class UserServiceTest {
 
     @Test
     void testFindById_UserExists() {
-        User user = new User(1L, "efim", "efim@mail.ru", "encoded123", true, Role.USER);
+        User user = new User(1L, "efim", "efim@mail.ru", "encoded123", true, Role.USER, new ArrayList<>(), new ArrayList<>());
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         User found = userService.findById(1L);
         assertEquals(user, found);
@@ -41,8 +42,8 @@ class UserServiceTest {
 
     @Test
     void testUpdate() {
-        User original = new User(1L, "efim", "efim@mail.ru", "encoded123", true, Role.USER);
-        User updatedData = new User(null, "egor", "egor@mail.ru", "qwe", true, Role.USER);
+        User original = new User(1L, "efim", "efim@mail.ru", "encoded123", true, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User updatedData = new User(null, "egor", "egor@mail.ru", "qwe", true, Role.USER, new ArrayList<>(), new ArrayList<>());
 
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(original));
         Mockito.when(passwordEncoder.encode("qwe")).thenReturn("encodedQwe");

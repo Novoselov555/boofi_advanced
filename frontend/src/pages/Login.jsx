@@ -28,11 +28,11 @@ export default function Login() {
             });
 
             const data = await res.json();
-
             if (!res.ok) {
                 throw new Error(data.message || 'Ошибка при входе');
             }
-
+            localStorage.setItem('authHeader', `Bearer ${data.token}`);
+            localStorage.setItem('userRole', data.role);
             navigate('/dashboard', { replace: true });
         } catch (err) {
             setError(err.message);
