@@ -3,7 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dto.UserDto;
 import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
-import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.exception.auth.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

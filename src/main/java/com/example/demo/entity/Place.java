@@ -2,7 +2,9 @@ package com.example.demo.entity;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -21,7 +23,7 @@ public class Place {
     private Coworking coworking;
 
     @Column(nullable = false)
-    private String name;
+    private Integer seatId;
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings;

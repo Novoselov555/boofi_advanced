@@ -1,11 +1,18 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.BookingDto;
+import com.example.demo.entity.Booking;
+import com.example.demo.entity.BookingStatus;
 import com.example.demo.entity.User;
-import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.exception.auth.UserNotFoundException;
+import com.example.demo.exception.booking.BookingNotFoundException;
+import com.example.demo.repository.BookingRepository;
 import com.example.demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -13,6 +20,8 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BookingRepository bookingRepository;
+
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Пользователь не найден: " + id));
     }
@@ -28,7 +37,7 @@ public class UserService {
     public User logout(Long id) {
         User user = findById(id);
         user.setAuthenticated(false);
-        return user;
+        return userRepository.save(user);
     }
 
     public void delete(Long id) {
@@ -36,5 +45,10 @@ public class UserService {
             throw new UserNotFoundException("Пользователь не найден: " + id);
         }
         userRepository.deleteById(id);
+    }
+
+    // Получение всех бронирований по userId
+    public List<Booking> getBookingsByUserId(Long userId) {
+        return bookingRepository.getAllBookingsByPlaceId(userId);
     }
 }

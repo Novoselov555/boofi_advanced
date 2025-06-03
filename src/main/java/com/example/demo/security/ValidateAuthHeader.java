@@ -2,7 +2,7 @@ package com.example.demo.security;
 
 import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
-import com.example.demo.exception.IncorrectCredentialsException;
+import com.example.demo.exception.auth.IncorrectCredentialsException;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
