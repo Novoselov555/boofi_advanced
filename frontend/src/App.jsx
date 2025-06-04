@@ -2,9 +2,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-// import BookingPage from './pages/BookingPage';
-// import MyBookings from './pages/MyBookings';
+import CoworkingViewPage from './pages/CoworkingViewPage';
 import AdminPanel from './pages/AdminPanel';
+import MyBookingsPage from './pages/MyBookingsPage';
 
 const PrivateRoute = ({ children }) => {
     const authHeader = localStorage.getItem('authHeader');
@@ -39,17 +39,23 @@ function App() {
                     </PrivateRoute>
                 } />
 
+                <Route path="/coworking/:coworkingId" element={
+                    <PrivateRoute>
+                        <CoworkingViewPage />
+                    </PrivateRoute>
+                } />
+
                 {/*<Route path="/booking/:placeId" element={*/}
                 {/*    <PrivateRoute>*/}
                 {/*        <BookingPage />*/}
                 {/*    </PrivateRoute>*/}
                 {/*} />*/}
 
-                {/*<Route path="/my-bookings" element={*/}
-                {/*    <PrivateRoute>*/}
-                {/*        <MyBookings />*/}
-                {/*    </PrivateRoute>*/}
-                {/*} />*/}
+                <Route path="/my-bookings" element={
+                    <PrivateRoute>
+                        <MyBookingsPage />
+                    </PrivateRoute>
+                } />
 
                 <Route path="/admin" element={
                     <AdminRoute>

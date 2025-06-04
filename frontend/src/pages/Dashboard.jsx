@@ -96,15 +96,13 @@ export default function Dashboard() {
         return <div className="error-message" style={{ margin: '20px' }}>Ошибка: {error}</div>;
     }
 
-    // Получаем все места из всех коворкингов
-    // Ожидаем, что каждый объект coworking в массиве coworkings имеет свойство 'places', которое является массивом мест
-    // Каждое место (place) должно иметь 'id', 'name', 'description'
-    const allPlaces = coworkings.flatMap(coworking =>
-        (coworking.places || []).map(place => ({
-            ...place,
-            coworkingName: coworking.name // Добавляем имя коворкинга для возможного использования
-        }))
-    );
+    // УДАЛЯЕМ или комментируем эту логику, если она больше не нужна в таком виде
+    // const allPlaces = coworkings.flatMap(coworking =>
+    //     (coworking.places || []).map(place => ({
+    //         ...place,
+    //         coworkingName: coworking.name
+    //     }))
+    // );
 
     return (
         <div className="dashboard">
@@ -122,25 +120,31 @@ export default function Dashboard() {
                 </div>
             </header>
             <main className="dashboard-main dashboard-main--single">
-                <div className="places-section places-section--single">
-                    <h2>Выберите помещение</h2>
-                    {allPlaces.length > 0 ? (
+                <div className="places-section places-section--single"> {/* Можно переименовать класс, если это больше не "места" */}
+                    <h2>Выберите коворкинг</h2> {/* Изменяем заголовок */}
+                    {coworkings.length > 0 ? ( // Итерируем по coworkings
                         <div className="places-grid places-grid--single">
-                            {allPlaces.map(place => (
+                            {coworkings.map(coworking => ( // Итерация по coworkings
                                 <div
-                                    key={place.id}
+                                    key={coworking.id}
                                     className="place-card place-card--big"
-                                    onClick={() => navigate(`/booking/${place.id}`)} // Передаем ID места
+                                    // Определяем, что делать при клике. Например, перейти на страницу мест этого коворкинга
+                                    // или на страницу бронирования первого места, или просто лог.
+                                    // Для примера, пока оставим переход на условный /booking/coworking-{id},
+                                    // подразумевая, что BookingPage сможет обработать ID коворкинга
+                                    // или вы захотите создать отдельную страницу для отображения мест коворкинга.
+                                    onClick={() => navigate(`/coworking/${coworking.id}`)}
                                 >
-                                    <h3>{place.name}</h3>
-                                    <p>{place.description}</p>
-                                    {/* Можно добавить имя коворкинга, если нужно: <p>Из: {place.coworkingName}</p> */}
-                                    <button className="choose-btn">Забронировать</button>
+                                    <h3>{coworking.name}</h3>      {/* Отображаем имя КОВОРКИНГА */}
+                                    <p>{coworking.description}</p>  {/* Отображаем описание КОВОРКИНГА */}
+                                    {/* Кнопку "Забронировать" можно оставить, если подразумевается бронирование всего коворкинга */}
+                                    {/* или первого доступного места. Либо ее можно убрать/изменить. */}
+                                    <button className="choose-btn">Выбрать</button> {/* Изменим текст кнопки для ясности */}
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <p>Нет доступных помещений для бронирования.</p>
+                        <p>Нет доступных коворкингов.</p> // Сообщение, если коворкингов нет
                     )}
                 </div>
             </main>

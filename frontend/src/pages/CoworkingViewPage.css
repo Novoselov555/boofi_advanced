@@ -1,0 +1,368 @@
+/* Общие стили для страницы CoworkingViewPage */
+.cvp-page {
+    background-color: #f0f2f5; /* Нейтральный светлый фон, можно изменить на ваш #e9e8ff */
+    height: 100%; /* Изменено с min-height: 100vh */
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box; /* Учитываем padding в общей ширине/высоте */
+}
+
+/* Стили для карточки с информацией о коворкинге */
+.cvp-header-card {
+    background-color: #ffffff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 900px; /* Сделаем немного шире */
+    box-sizing: border-box;
+}
+
+.cvp-header-card h1 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 2em;
+}
+
+.cvp-description {
+    color: #555;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.cvp-back-button {
+    background-color: #6c63ff; /* Фиолетовый цвет */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.cvp-back-button:hover {
+    background-color: #574de6; /* Темнее при наведении */
+    transform: translateY(-1px);
+}
+
+.cvp-back-button:active {
+    transform: translateY(0px);
+}
+
+/* Контейнер для "комнаты" со схемой мест */
+.cvp-room-layout-container {
+    background-color: #ffffff;
+    padding: 20px; /* Внутренний отступ */
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    position: relative; /* Для позиционирования меток */
+    width: 100%;
+    max-width: 900px; /* Ширина контейнера комнаты */
+    margin: 0 auto 30px auto; /* Центрирование и нижний отступ */
+    border: 3px solid #d0d7de; /* Видимая окантовка */
+    box-sizing: border-box;
+    min-height: 400px; /* Минимальная высота, чтобы было похоже на комнату */
+    display: flex;
+    flex-direction: column;
+}
+
+.cvp-room-layout-title {
+    text-align: center;
+    margin-top: 10px; /* Отступ от верхней границы контейнера/меток */
+    margin-bottom: 30px;
+    color: #444;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+/* Стили для меток "Окно" и "Вход" */
+.cvp-room-label {
+    position: absolute; /* Позиционируем относительно room-layout-container */
+    background-color: #6c63ff;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.cvp-room-label-window {
+    top: -15px;  /* Позиционируем на/над верхней окантовкой */
+    left: 20px;
+    transform: translateY(-50%); /* Центрируем метку относительно линии */
+    writing-mode: horizontal-tb; /* Горизонтальный текст */
+}
+
+.cvp-room-label-entrance {
+    bottom: -15px; /* Позиционируем на/под нижней окантовкой */
+    right: 20px;
+    transform: translateY(50%);
+    writing-mode: horizontal-tb;
+}
+
+/* Сетка для мест */
+.cvp-places-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Здесь изменение: 2 колонки */
+    gap: 30px;                             /* Отступ между кругляшками */
+    padding: 20px;                         /* Внутренний отступ для самой сетки */
+    flex-grow: 1;                          /* Позволяет сетке занимать доступное пространство в комнате */
+    align-content: flex-start;             /* Выравнивание рядов к началу, если их мало */
+}
+
+/* Стиль для "кругляшка" места */
+.cvp-place-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #e9e8ff; /* Светло-фиолетовый фон */
+    border: 2px solid #aea8e5; /* Более темная фиолетовая граница */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    font-size: 12px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Если имя слишком длинное и выходит за круг */
+}
+
+.cvp-place-circle:hover {
+    transform: scale(1.08);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    background-color: #dcd6ff; /* Немного темнее при наведении */
+}
+
+.cvp-place-name {
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Предотвращает перенос текста */
+    color: #333;
+    font-weight: 500;
+}
+
+/* Сообщения о статусе/ошибках */
+.cvp-status-message {
+    padding: 20px;
+    text-align: center;
+    font-size: 1.2em;
+    width: 100%;
+    max-width: 800px;
+}
+
+.cvp-error-message { /* Дополнительно к .cvp-status-message */
+    color: #d9534f; /* Красный цвет для ошибок */
+    background-color: #f2dede;
+    border: 1px solid #ebccd1;
+    border-radius: 8px;
+}
+
+.cvp-no-places-message {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.1em;
+    color: #777;
+}
+
+/* Стили для модального окна бронирования */
+.cvp-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Чтобы было поверх других элементов */
+}
+
+.cvp-modal {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 500px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Пространство между элементами в модалке */
+}
+
+.cvp-modal h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 1.8em;
+    text-align: center;
+}
+
+.cvp-modal p {
+    margin-bottom: 15px;
+    color: #555;
+    font-size: 1em;
+    text-align: center;
+}
+
+.cvp-form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cvp-form-group label {
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #444;
+}
+
+.cvp-datetime-input {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.cvp-modal-actions {
+    display: flex;
+    justify-content: flex-end; /* Кнопки справа */
+    gap: 15px; /* Пространство между кнопками */
+    margin-top: 15px;
+}
+
+.cvp-button-confirm,
+.cvp-button-cancel {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.cvp-button-confirm {
+    background-color: #6c63ff;
+    color: white;
+}
+
+.cvp-button-confirm:hover {
+    background-color: #574de6;
+    transform: translateY(-1px);
+}
+
+.cvp-button-cancel {
+    background-color: #f0f2f5;
+    color: #555;
+    border: 1px solid #ddd;
+}
+
+.cvp-button-cancel:hover {
+    background-color: #e2e6ea;
+    transform: translateY(-1px);
+}
+
+.cvp-button-confirm:disabled,
+.cvp-button-cancel:disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* Стили для сообщений о бронировании */
+.cvp-booking-message {
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    font-size: 0.95em;
+    text-align: center;
+}
+
+.cvp-booking-loading {
+    background-color: #e9e8ff;
+    color: #574de6;
+    border: 1px solid #aea8e5;
+}
+
+.cvp-booking-success {
+    background-color: #d4edda; /* Светло-зеленый */
+    color: #155724;      /* Темно-зеленый */
+    border: 1px solid #c3e6cb;
+}
+
+.cvp-booking-error {
+    background-color: #f8d7da; /* Светло-красный */
+    color: #721c24;      /* Темно-красный */
+    border: 1px solid #f5c6cb;
+}
+
+/* Стили для отображения существующих бронирований в модалке */
+.cvp-existing-bookings-section {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.cvp-loading-existing,
+.cvp-no-existing-bookings {
+    font-style: italic;
+    color: #777;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.cvp-existing-bookings h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.cvp-existing-bookings ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.cvp-existing-bookings li {
+    background-color: #fff;
+    padding: 8px 12px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+    color: #555;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Небольшие корректировки для общего вида модалки, если нужно */
+.cvp-modal {
+    gap: 20px; /* Увеличим немного основной отступ в модалке */
+}
+
+.cvp-booking-message {
+    margin-top: 5px; /* Небольшой отступ сверху для сообщений */
+    margin-bottom: 10px; /* Уменьшим отступ снизу, если есть секция существующих броней */
+}
