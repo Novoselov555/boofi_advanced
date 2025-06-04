@@ -33,7 +33,7 @@ public class AdminService {
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
         user.setRole(userDto.getRole());
-        return user;
+        return userRepository.save(user);
     }
 
     public void deleteById(Long id) {

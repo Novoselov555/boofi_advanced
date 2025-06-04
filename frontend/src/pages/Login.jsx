@@ -31,7 +31,7 @@ export default function Login() {
             if (!res.ok) {
                 throw new Error(data.message || 'Ошибка при входе');
             }
-            localStorage.setItem('authHeader', `Bearer ${data.token}`);
+            localStorage.setItem('authHeader', `Basic ${data.token}`);
             localStorage.setItem('userRole', data.role);
             navigate('/dashboard', { replace: true });
         } catch (err) {
