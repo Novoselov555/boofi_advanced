@@ -10,12 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
 
 import java.util.ArrayList;
 import java.util.Base64;
@@ -27,55 +25,67 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @Testcontainers
 public class AuthControllerIntegrationTest extends DataBaseConnect {
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private TestRestTemplate testRestTemplate;
+    private TestRestTemplate restTemplate;
 
     @Autowired
     private UserRepository userRepository;
 
     @BeforeEach
-    public void cleanUp() {
+    public void setUp() {
         userRepository.deleteAll();
     }
 
     @Test
     public void testRegisterUser() {
         RegisterRequest registerRequest = new RegisterRequest("efim", "efim@mail.ru", "123");
-        ResponseEntity<Map> response = testRestTemplate.postForEntity("/auth/register", registerRequest, Map.class);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode(), "Статусы отличаются");
+        ResponseEntity<Map> response = restTemplate.postForEntity("/auth/register", registerRequest, Map.class);
 
-        String credentials = (String) response.getBody().get("token");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        String decodedCredentials = new String(Base64.getDecoder().decode(credentials));
-        String decodedEmail = decodedCredentials.split(":")[0];
-        String decodedPassword = decodedCredentials.split(":")[1];
+        String token = (String) response.getBody().get("token");
+        String decoded = new String(Base64.getDecoder().decode(token));
+        String[] parts = decoded.split(":");
 
-        assertEquals("efim@mail.ru", decodedEmail, "Почты не совпадают");
-        assertEquals("123", decodedPassword, "Пароли не совпадают");
+        assertEquals("efim@mail.ru", parts[0]);
+        assertEquals("123", parts[1]);
     }
 
     @Test
     public void testRegisterAlreadyExistingUser() {
-        User user = new User(null,"efim", "efim@mail.ru", "123", true, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User user = new User();
+        user.setName("efim");
+        user.setEmail("efim@mail.ru");
+        user.setPassword("123");
+        user.setAuthenticated(true);
+        user.setRole(Role.USER);
+        user.setBookings(new ArrayList<>());
         userRepository.save(user);
 
         RegisterRequest registerRequest = new RegisterRequest("efim", "efim@mail.ru", "123");
-        ResponseEntity<Map> response = testRestTemplate.postForEntity("/auth/register", registerRequest, Map.class);
+        ResponseEntity<Map> response = restTemplate.postForEntity("/auth/register", registerRequest, Map.class);
 
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode(), "Статусы не совпадают");
     }
 
     @Test
     public void testLoginUser() {
-        User user = new User(null,"efim", "efim@mail.ru", passwordEncoder.encode("123"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User user = new User();
+        user.setName("efim");
+        user.setEmail("efim@mail.ru");
+        user.setPassword(passwordEncoder.encode("123"));
+        user.setAuthenticated(true);
+        user.setRole(Role.USER);
+        user.setBookings(new ArrayList<>());
         userRepository.save(user);
 
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
-        ResponseEntity<Map> response = testRestTemplate.postForEntity("/auth/login", loginRequest, Map.class);
+        ResponseEntity<Map> response = restTemplate.postForEntity("/auth/login", loginRequest, Map.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Статусы не совпадают");
 
@@ -91,20 +101,27 @@ public class AuthControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testLoginIncorrectPassword() {
-        User user = new User(null,"efim", "efim@mail.ru", passwordEncoder.encode("1234"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User user = new User();
+        user.setName("efim");
+        user.setEmail("efim@mail.ru");
+        user.setPassword(passwordEncoder.encode("1234"));
+        user.setAuthenticated(true);
+        user.setRole(Role.USER);
+        user.setBookings(new ArrayList<>());
         userRepository.save(user);
 
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
-        ResponseEntity<Map> response = testRestTemplate.postForEntity("/auth/login", loginRequest, Map.class);
+        ResponseEntity<Map> response = restTemplate.postForEntity("/auth/login", loginRequest, Map.class);
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode(), "Статусы не совпадают");
     }
 
+
     @Test
     public void testLoginNonExistingUser() {
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
-        ResponseEntity<Map> response = testRestTemplate.postForEntity("/auth/login", loginRequest, Map.class);
+        ResponseEntity<Map> response = restTemplate.postForEntity("/auth/login", loginRequest, Map.class);
 
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode(), "Статусы не совпадают");
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 }

@@ -24,7 +24,6 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "place_id", nullable = false)
-    @JsonBackReference
     private Place place;
 
     @Column(nullable = false)

@@ -3,19 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import './AdminPanel.css'; // Подключаем наши основные стили
 import UsersTab from '../components/UsersTab';
 import AdminBookingsTab from '../components/AdminBookingsTab';
-// import AdminPlacesTab from '../components/AdminPlacesTab'; // Закомментировано, т.к. еще не реализовано
 
 export default function AdminPanel() {
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState('users'); // Начнем с вкладки Пользователи по умолчанию
+    const [activeTab, setActiveTab] = useState('users');
 
     useEffect(() => {
         const userRole = localStorage.getItem('userRole');
-        const authHeader = localStorage.getItem('authHeader'); // Проверим и токен на всякий случай
+        const authHeader = localStorage.getItem('authHeader');
 
         if (userRole !== 'ADMIN' || !authHeader) {
-            // Если не админ или нет токена, перенаправляем
-            navigate('/auth/login'); // Лучше на логин, если нет прав
+
+            navigate('/auth/login');
         }
     }, [navigate]);
 
@@ -27,10 +26,9 @@ export default function AdminPanel() {
                 return <AdminBookingsTab />;
             case 'places':
                 return (
-                    <div className="admin-tab-content"> {/* Обертка для консистентности */}
+                    <div className="admin-tab-content">
                         <h2>Управление помещениями и местами</h2>
                         <p>Этот раздел находится в разработке.</p>
-                        {/* Здесь будет компонент для управления помещениями/местами, например <AdminPlacesTab /> */}
                     </div>
                 );
             default:
@@ -47,7 +45,7 @@ export default function AdminPanel() {
                 </button>
             </header>
 
-            <div className="admin-main-content"> {/* Общая обертка для табов и контента */}
+            <div className="admin-main-content">
                 <div className="admin-tabs">
                     <button
                         className={`tab-btn ${activeTab === 'users' ? 'active' : ''}`}
@@ -69,9 +67,7 @@ export default function AdminPanel() {
                     </button>
                 </div>
 
-                {/* <div className="tab-content-wrapper">  Убрали эту обертку, .admin-tab-content будет у каждого таба */}
                 {renderTabContent()}
-                {/* </div> */}
             </div>
         </div>
     );

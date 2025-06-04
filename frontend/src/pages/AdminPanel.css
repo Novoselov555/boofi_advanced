@@ -1,12 +1,10 @@
-/* frontend/src/pages/AdminPanel.css */
-
 .admin-panel {
     padding: 20px;
     max-width: 1200px;
-    margin: 30px auto; /* Отступ сверху и снизу */
-    background-color: #f8f9fa; /* Чуть более светлый фон для всей панели */
-    border-radius: 10px; /* Более скругленные углы */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Мягкая тень */
+    margin: 30px auto;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .admin-header {
@@ -15,21 +13,21 @@
     align-items: center;
     margin-bottom: 25px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #e9ecef; /* Более светлая граница */
+    border-bottom: 1px solid #e9ecef;
 }
 
 .admin-header h1 {
     margin: 0;
-    font-size: 2.2em; /* Немного крупнее заголовок */
-    color: #2c3e50; /* Более темный, но не черный */
+    font-size: 2.2em;
+    color: #2c3e50;
 }
 
 .admin-header .back-btn {
-    background-color: #5c6bc0; /* Индиго-подобный цвет */
+    background-color: #5c6bc0;
     color: white;
     border: none;
     padding: 10px 18px;
-    border-radius: 6px; /* Чуть больше скругление */
+    border-radius: 6px;
     cursor: pointer;
     font-size: 0.95em;
     font-weight: 500;
@@ -37,46 +35,45 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .admin-header .back-btn:hover {
-    background-color: #3f51b5; /* Темнее при наведении */
+    background-color: #3f51b5;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .admin-tabs {
     display: flex;
     margin-bottom: 0;
-    /* border-bottom: 1px solid #dee2e6; */ /* Убираем общую линию, активная вкладка сама ее покажет */
 }
 
 .tab-btn {
-    padding: 14px 28px; /* Больше паддинг для вкладок */
+    padding: 14px 28px;
     cursor: pointer;
     border: none;
     background-color: transparent;
-    font-size: 1.1em; /* Крупнее текст вкладок */
+    font-size: 1.1em;
     font-weight: 500;
-    color: #5f6368; /* Спокойный серый для неактивных */
-    border-bottom: 3px solid transparent; /* Основа для подсветки активной */
-    margin-right: 8px; /* Небольшой отступ между вкладками */
+    color: #5f6368;
+    border-bottom: 3px solid transparent;
+    margin-right: 8px;
     transition: color 0.2s, border-bottom-color 0.2s;
 }
 
 .tab-btn:hover {
-    color: #6c63ff; /* Цвет при наведении */
+    color: #6c63ff;
 }
 
 .tab-btn.active {
-    color: #6c63ff; /* Основной цвет для активной вкладки */
-    border-bottom-color: #6c63ff; /* Подчеркивание активной вкладки */
-    font-weight: 600; /* Выделяем активную вкладку жирным */
+    color: #6c63ff;
+    border-bottom-color: #6c63ff;
+    font-weight: 600;
 }
 
 .admin-tab-content {
-    padding: 30px; /* Больше внутреннего отступа для контента */
+    padding: 30px;
     background-color: #ffffff;
-    border: 1px solid #e9ecef; /* Граница для контентной части */
-    border-top: none; /* Убираем верхнюю границу, т.к. табы уже ее формируют */
+    border: 1px solid #e9ecef;
+    border-top: none;
     border-radius: 0 0 8px 8px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.03); /* Очень легкая тень */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.03);
     min-height: 400px;
 }
 
@@ -84,48 +81,47 @@
     margin-top: 0;
     margin-bottom: 25px;
     font-size: 1.8em;
-    color: #34495e; /* Темно-синий для подзаголовков */
+    color: #34495e;
 }
 
-/* Общие стили для модальных окон в админ-панели */
 .admin-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6); /* Более темный оверлей */
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1050; /* Убедимся, что выше других элементов */
-    backdrop-filter: blur(3px); /* Эффект размытия фона */
+    z-index: 1050;
+    backdrop-filter: blur(3px);
 }
 
 .admin-modal {
     background-color: white;
-    padding: 30px 35px; /* Больше паддинга в модалке */
-    border-radius: 10px; /* Более скругленные углы модалки */
+    padding: 30px 35px;
+    border-radius: 10px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
     width: 100%;
-    max-width: 550px; /* Немного шире модалка */
+    max-width: 550px;
 }
 
 .admin-modal h3 {
     margin-top: 0;
     margin-bottom: 25px;
-    font-size: 1.7em; /* Крупнее заголовок модалки */
+    font-size: 1.7em;
     color: #2c3e50;
     text-align: center;
 }
 
 .admin-form-group {
-    margin-bottom: 18px; /* Больше отступ между полями */
+    margin-bottom: 18px;
 }
 
 .admin-form-group label {
     display: block;
-    margin-bottom: 8px; /* Отступ у лейбла */
+    margin-bottom: 8px;
     font-weight: 500;
     color: #34495e;
 }
@@ -135,8 +131,8 @@
 .admin-form-group select,
 .admin-datetime-input {
     width: 100%;
-    padding: 12px 15px; /* Больше паддинг в инпутах */
-    border: 1px solid #ced4da; /* Стандартная граница Bootstrap */
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
     border-radius: 6px;
     box-sizing: border-box;
     font-size: 1em;
@@ -145,7 +141,7 @@
 .admin-form-group input:focus,
 .admin-form-group select:focus,
 .admin-datetime-input:focus {
-    border-color: #80bdff; /* Подсветка при фокусе */
+    border-color: #80bdff;
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
@@ -154,17 +150,17 @@
 .admin-modal-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 12px; /* Отступ между кнопками */
+    gap: 12px;
     margin-top: 25px;
 }
 
 .admin-button-confirm,
 .admin-button-cancel {
-    padding: 10px 20px; /* Единый размер для кнопок */
+    padding: 10px 20px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 1em; /* Крупнее шрифт на кнопках */
+    font-size: 1em;
     font-weight: 500;
     transition: background-color 0.2s, transform 0.1s;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -177,7 +173,7 @@
 
 
 .admin-button-confirm {
-    background-color: #28a745; /* Зеленый для подтверждения */
+    background-color: #28a745;
     color: white;
 }
 .admin-button-confirm:hover {
@@ -185,7 +181,7 @@
 }
 
 .admin-button-cancel {
-    background-color: #6c757d; /* Серый для отмены */
+    background-color: #6c757d;
     color: white;
 }
 .admin-button-cancel:hover {
@@ -201,10 +197,9 @@
     transform: none;
 }
 
-/* Стили для сообщений (loading, success, error) */
 .admin-message {
     padding: 12px 18px;
-    margin: 15px 0; /* Отступы сверху и снизу */
+    margin: 15px 0;
     border-radius: 6px;
     font-size: 0.95em;
     border-width: 1px;
@@ -226,48 +221,48 @@
     border-color: #ffa39e;
 }
 
-/* Стили для таблиц в админке */
+
 .admin-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 25px;
     margin-bottom: 25px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Легкая тень для таблицы */
-    border-radius: 6px; /* Скругление для обертки таблицы, если бы она была */
-    overflow: hidden; /* Чтобы скругление работало, если граница у самой таблицы */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-radius: 6px;
+    overflow: hidden;
 }
 
 .admin-table th,
 .admin-table td {
     border: 1px solid #e9ecef;
-    padding: 14px 16px; /* Увеличенный паддинг в ячейках */
+    padding: 14px 16px;
     text-align: left;
     vertical-align: middle;
-    font-size: 0.98em; /* Чуть крупнее шрифт в таблице */
+    font-size: 0.98em;
 }
 
 .admin-table th {
-    background-color: #f8f9fa; /* Очень светлый фон для заголовков */
+    background-color: #f8f9fa;
     font-weight: 600;
-    color: #343a40; /* Темный цвет текста заголовков */
-    text-transform: uppercase; /* Заголовки капсом */
-    letter-spacing: 0.5px; /* Небольшой интервал между буквами */
+    color: #343a40;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.admin-table tr:nth-child(even) td { /* Применяем фон только к td в четных строках */
-    background-color: #fcfdff; /* Очень-очень легкий фон для чередования */
+.admin-table tr:nth-child(even) td {
+    background-color: #fcfdff;
 }
-.admin-table tr:hover td { /* Применяем фон только к td при наведении */
-    background-color: #f1f5f9; /* Легкая подсветка всей строки */
+.admin-table tr:hover td {
+    background-color: #f1f5f9;
 }
 
 .admin-table .edit-btn,
 .admin-table .delete-button {
-    padding: 7px 14px; /* Паддинг кнопок в таблице */
+    padding: 7px 14px;
     margin-right: 8px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 0.9em; /* Шрифт кнопок в таблице */
+    font-size: 0.9em;
     border: none;
     color: white;
     transition: opacity 0.2s, transform 0.1s;
@@ -280,20 +275,19 @@
 }
 
 .admin-table .edit-btn {
-    background-color: #007bff; /* Синий */
+    background-color: #007bff;/
 }
 
 .admin-table .delete-button {
-    background-color: #dc3545; /* Красный */
+    background-color: #dc3545;
 }
 
-/* Кнопка "Удалить всех пользователей" */
 .admin-delete-all-button {
-    background-color: #d9534f; /* Более насыщенный красный */
+    background-color: #d9534f;
     color: white;
     border: none;
     padding: 10px 20px;
-    margin-bottom: 25px; /* Отступ снизу */
+    margin-bottom: 25px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 1em;
@@ -302,6 +296,6 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .admin-delete-all-button:hover {
-    background-color: #c9302c; /* Темнее при наведении */
+    background-color: #c9302c;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }

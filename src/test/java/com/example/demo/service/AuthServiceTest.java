@@ -7,6 +7,8 @@ import com.example.demo.entity.User;
 import com.example.demo.exception.auth.IncorrectCredentialsException;
 import com.example.demo.exception.auth.UserAlreadyExistsException;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.CoworkingRepository;
+import com.example.demo.repository.PlaceRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,15 +28,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class AuthServiceTest {
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private PasswordEncoder passwordEncoder;
+
 
     @InjectMocks
     private AuthService authService;
 
     @Test
     public void testInitAdmin() {
+        Mockito.when(userRepository.count()).thenReturn(0L);
         Mockito.when(passwordEncoder.encode("admin123")).thenReturn("encodedAdmin");
         authService.init();
         Mockito.verify(userRepository)
@@ -67,16 +70,13 @@ class AuthServiceTest {
     public void testLogin_IncorrectPassword() {
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
 
-        User stored = new User(
-                1L,
-                "efim",
-                "efim@mail.ru",
-                "encodedPw",
-                false,
-                Role.USER,
-                new ArrayList<>(),
-                new ArrayList<>()
-        );
+        User stored = new User();
+        stored.setId(1L);
+        stored.setName("efim");
+        stored.setEmail("efim@mail.ru");
+        stored.setPassword("encodedPw");
+        stored.setAuthenticated(false);
+        stored.setRole(Role.USER);
 
         Mockito.when(userRepository.findByEmail("efim@mail.ru")).thenReturn(Optional.of(stored));
         Mockito.when(passwordEncoder.matches("123", "encodedPw")).thenReturn(false);
@@ -111,16 +111,13 @@ class AuthServiceTest {
     public void testLoginUser() {
         LoginRequest loginRequest = new LoginRequest("efim@mail.ru", "123");
 
-        User stored = new User(
-                42L,
-                "efim",
-                "efim@mail.ru",
-                "encoded123",
-                true,
-                Role.USER,
-                new ArrayList<>(),
-                new ArrayList<>()
-        );
+        User stored = new User();
+        stored.setId(42L);
+        stored.setName("efim");
+        stored.setEmail("efim@mail.ru");
+        stored.setPassword("encoded123");
+        stored.setAuthenticated(true);
+        stored.setRole(Role.USER);
 
         Mockito.when(userRepository.findByEmail("efim@mail.ru")).thenReturn(Optional.of(stored));
         Mockito.when(passwordEncoder.matches("123", "encoded123")).thenReturn(true);

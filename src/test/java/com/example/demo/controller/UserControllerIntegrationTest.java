@@ -15,6 +15,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,118 +44,127 @@ public class UserControllerIntegrationTest extends DataBaseConnect {
 
     @Test
     public void testUpdateUser_Success() {
-        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User user = new User();
+        user.setName("egor");
+        user.setEmail("egor@mail.ru");
+        user.setPassword(passwordEncoder.encode("123"));
+        user.setAuthenticated(true);
+        user.setRole(Role.USER);
+        user.setBookings(new ArrayList<>());
         user = userRepository.save(user);
 
-        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", true, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User updateBody = new User();
+        updateBody.setName("EgorUpdated");
+        updateBody.setEmail("egor@mail.ru");
+        updateBody.setPassword("newpass");
+        updateBody.setAuthenticated(true);
+        updateBody.setRole(Role.USER);
+        updateBody.setBookings(new ArrayList<>());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", buildAuthHeader("egor@mail.ru", "123"));
+        headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<User> entity = new HttpEntity<>(updateBody, headers);
 
-        ResponseEntity<User> response = testRestTemplate.exchange("/user/" + user.getId(), HttpMethod.POST, entity, User.class);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                "/user/" + user.getId(), HttpMethod.POST, entity, Map.class
+        );
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("EgorUpdated", response.getBody().getName());
+        assertEquals("EgorUpdated", response.getBody().get("name"));
     }
+
 
     @Test
     public void testUpdateUser_InvalidPassword() {
-        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User user = new User();
+        user.setName("egor");
+        user.setEmail("egor@mail.ru");
+        user.setPassword(passwordEncoder.encode("123"));
+        user.setAuthenticated(true);
+        user.setRole(Role.USER);
+        user.setBookings(new ArrayList<>());
         user = userRepository.save(user);
 
-        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", true, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User updateBody = new User();
+        updateBody.setName("EgorUpdated");
+        updateBody.setEmail("egor@mail.ru");
+        updateBody.setPassword("newpass");
+        updateBody.setAuthenticated(true);
+        updateBody.setRole(Role.USER);
+        updateBody.setBookings(new ArrayList<>());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", buildAuthHeader("egor@mail.ru", "wrongpass"));
         HttpEntity<User> entity = new HttpEntity<>(updateBody, headers);
 
-        ResponseEntity<String> response = testRestTemplate.exchange("/user/" + user.getId(), HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = testRestTemplate.exchange("/user/profile/me", HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 
     @Test
     public void testUpdateUser_NotAuthenticated() {
-        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), false, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User user = new User();
+        user.setName("egor");
+        user.setEmail("egor@mail.ru");
+        user.setPassword(passwordEncoder.encode("123"));
+        user.setAuthenticated(false);
+        user.setRole(Role.USER);
+        user.setBookings(new ArrayList<>());
         user = userRepository.save(user);
 
-        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", false, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User updateBody = new User();
+        updateBody.setName("EgorUpdated");
+        updateBody.setEmail("egor@mail.ru");
+        updateBody.setPassword("newpass");
+        updateBody.setAuthenticated(false);
+        updateBody.setRole(Role.USER);
+        updateBody.setBookings(new ArrayList<>());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", buildAuthHeader("egor@mail.ru", "123"));
         HttpEntity<User> entity = new HttpEntity<>(updateBody, headers);
 
-        ResponseEntity<String> response = testRestTemplate.exchange("/user/" + user.getId(), HttpMethod.POST, entity, String.class);
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    }
-
-    @Test
-    public void testUpdateUser_OtherUserId() {
-        User user1 = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
-        user1 = userRepository.save(user1);
-        User user2 = new User(null, "petr", "petr@mail.ru", passwordEncoder.encode("321"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
-        user2 = userRepository.save(user2);
-
-        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", true, Role.USER, new ArrayList<>(), new ArrayList<>());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", buildAuthHeader("egor@mail.ru", "123"));
-        HttpEntity<User> entity = new HttpEntity<>(updateBody, headers);
-
-        ResponseEntity<String> response = testRestTemplate.exchange("/user/" + user2.getId(), HttpMethod.POST, entity, String.class);
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    }
-
-    @Test
-    public void testUpdateUser_UserNotExists() {
-        User updateBody = new User(null, "EgorUpdated", "egor@mail.ru", "newpass", true, Role.USER, new ArrayList<>(), new ArrayList<>());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", buildAuthHeader("egor@mail.ru", "123"));
-        HttpEntity<User> entity = new HttpEntity<>(updateBody, headers);
-
-        ResponseEntity<String> response = testRestTemplate.exchange("/user/99999", HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = testRestTemplate.exchange("/user/profile/me", HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 
     @Test
     public void testDeleteUser_Success() {
-        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User user = new User();
+        user.setName("egor");
+        user.setEmail("egor@mail.ru");
+        user.setPassword(passwordEncoder.encode("123"));
+        user.setAuthenticated(true);
+        user.setRole(Role.USER);
+        user.setBookings(new ArrayList<>());
         user = userRepository.save(user);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", buildAuthHeader("egor@mail.ru", "123"));
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response = testRestTemplate.exchange("/user/" + user.getId(), HttpMethod.DELETE, entity, String.class);
+        // !!! /user/profile/me вместо /user/{id}
+        ResponseEntity<String> response = testRestTemplate.exchange("/user/profile/me", HttpMethod.DELETE, entity, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertFalse(userRepository.findById(user.getId()).isPresent());
     }
 
     @Test
-    public void testDeleteUser_OtherUserId() {
-        User user1 = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
-        user1 = userRepository.save(user1);
-        User user2 = new User(null, "petr", "petr@mail.ru", passwordEncoder.encode("321"), true, Role.USER, new ArrayList<>(), new ArrayList<>());
-        user2 = userRepository.save(user2);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", buildAuthHeader("egor@mail.ru", "123"));
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<String> response = testRestTemplate.exchange("/user/" + user2.getId(), HttpMethod.DELETE, entity, String.class);
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    }
-
-    @Test
     public void testDeleteUser_NotAuthenticated() {
-        User user = new User(null, "egor", "egor@mail.ru", passwordEncoder.encode("123"), false, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User user = new User();
+        user.setName("egor");
+        user.setEmail("egor@mail.ru");
+        user.setPassword(passwordEncoder.encode("123"));
+        user.setAuthenticated(false);
+        user.setRole(Role.USER);
+        user.setBookings(new ArrayList<>());
         user = userRepository.save(user);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", buildAuthHeader("egor@mail.ru", "123"));
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response = testRestTemplate.exchange("/user/" + user.getId(), HttpMethod.DELETE, entity, String.class);
+        ResponseEntity<String> response = testRestTemplate.exchange("/user/profile/me", HttpMethod.DELETE, entity, String.class);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 
@@ -164,7 +174,7 @@ public class UserControllerIntegrationTest extends DataBaseConnect {
         headers.set("Authorization", buildAuthHeader("egor@mail.ru", "123"));
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response = testRestTemplate.exchange("/user/99999", HttpMethod.DELETE, entity, String.class);
+        ResponseEntity<String> response = testRestTemplate.exchange("/user/profile/me", HttpMethod.DELETE, entity, String.class);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 }

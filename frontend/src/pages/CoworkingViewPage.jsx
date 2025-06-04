@@ -2,11 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './CoworkingViewPage.css';
 
-const API_BASE_URL = 'http://localhost:8080'; // Выносим в константу
+const API_BASE_URL = 'http://localhost:8080';
 
 export default function CoworkingViewPage() {
     const { coworkingId } = useParams();
-    const navigate = useNavigate(); // navigate используется, поэтому оставляем
+    const navigate = useNavigate();
     const [coworkingData, setCoworkingData] = useState(null);
     const [placeToBook, setPlaceToBook] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,8 +67,6 @@ export default function CoworkingViewPage() {
         setExistingBookings([]);
         const authHeader = localStorage.getItem('authHeader');
         if (!authHeader) {
-            // Не будем перенаправлять, если пользователь просто смотрит
-            // navigate('/auth/login');
             setIsLoadingExistingBookings(false);
             return;
         }
@@ -79,7 +77,7 @@ export default function CoworkingViewPage() {
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ error: `Ошибка загрузки броней: ${response.statusText} (${response.status})` }));
                 console.error("Ошибка при загрузке существующих бронирований:", errorData.message || errorData.error);
-                setExistingBookings([]); // Убедимся, что список пуст при ошибке
+                setExistingBookings([]);
             } else {
                 const data = await response.json();
                 setExistingBookings(data || []);
@@ -90,7 +88,7 @@ export default function CoworkingViewPage() {
         } finally {
             setIsLoadingExistingBookings(false);
         }
-    }, [navigate]); // Добавляем navigate в зависимости useCallback, так как он используется внутри (хотя и закомментирован)
+    }, [navigate]);
 
     const handlePlaceClick = (place) => {
         setPlaceToBook(place);
@@ -106,7 +104,6 @@ export default function CoworkingViewPage() {
         setPlaceToBook(null);
         setBookingStartTime('');
         setBookingEndTime('');
-        // setBookingMessage({ type: '', text: '' }); // Не сбрасываем сообщение, чтобы пользователь успел его прочитать
     };
 
     const handleBookingSubmit = async () => {
@@ -143,10 +140,8 @@ export default function CoworkingViewPage() {
             }
             await response.json();
             setBookingMessage({ type: 'success', text: `Место "${placeToBook.name}" успешно забронировано!` });
-            fetchExistingBookings(placeToBook.id); // Обновляем список броней после успешного бронирования
+            fetchExistingBookings(placeToBook.id);
             setTimeout(() => {
-                // Не закрываем модалку автоматически, если не было ошибки, чтобы пользователь видел сообщение
-                // handleCloseModal();
             }, 3000);
         } catch (err) {
             console.error("Ошибка при бронировании:", err);
@@ -205,7 +200,6 @@ export default function CoworkingViewPage() {
                                         {existingBookings.map(booking => (
                                             <li key={booking.id}>
                                                 C: {new Date(booking.timeStart).toLocaleString()} - По: {new Date(booking.timeEnd).toLocaleString()}
-                                                {/* Если хотим показывать пользователя: (Пользователь ID: {booking.userId}) */}
                                             </li>
                                         ))}
                                     </ul>

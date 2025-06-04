@@ -8,7 +8,7 @@ export default function MyBookingsPage() {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [message, setMessage] = useState({ type: '', text: '' }); // Для сообщений об успехе/ошибке отмены
+    const [message, setMessage] = useState({ type: '', text: '' });
     const navigate = useNavigate();
     const authHeader = localStorage.getItem('authHeader');
 
@@ -71,11 +71,8 @@ export default function MyBookingsPage() {
                 const errorData = await response.json().catch(() => ({ message: `Ошибка отмены: ${response.status}` }));
                 throw new Error(errorData.message || 'Не удалось отменить бронирование.');
             }
-            // const updatedBooking = await response.json(); // Бэкенд возвращает обновленное бронирование
             setMessage({ type: 'success', text: 'Бронирование успешно отменено!' });
-            // Обновляем список бронирований, чтобы отразить изменение статуса
-            fetchUserBookings(); // или можно обновить статус локально:
-            // setBookings(prev => prev.map(b => b.id === bookingId ? {...b, status: updatedBooking.status} : b));
+            fetchUserBookings();
         } catch (err) {
             console.error("Ошибка при отмене бронирования:", err);
             setMessage({ type: 'error', text: err.message });
@@ -104,7 +101,6 @@ export default function MyBookingsPage() {
                     <thead>
                     <tr>
                         <th>ID Брони</th>
-                        {/* <th>Место</th> Пока не можем отобразить название/ID места */}
                         <th>Начало</th>
                         <th>Окончание</th>
                         <th>Статус</th>
@@ -115,12 +111,11 @@ export default function MyBookingsPage() {
                     {bookings.map(booking => (
                         <tr key={booking.id}>
                             <td>{booking.id}</td>
-                            {/* <td>{booking.place ? booking.place.name : 'N/A'}</td> */}
                             <td>{new Date(booking.timeStart).toLocaleString()}</td>
                             <td>{new Date(booking.timeEnd).toLocaleString()}</td>
                             <td>{booking.status}</td>
                             <td>
-                                {booking.status === 'BOOKED' && ( // Показываем кнопку отмены только для активных броней
+                                {booking.status === 'BOOKED' && (
                                     <button
                                         onClick={() => handleCancelBooking(booking.id)}
                                         className="cancel-btn"
@@ -128,7 +123,6 @@ export default function MyBookingsPage() {
                                         Отменить
                                     </button>
                                 )}
-                                {/* Здесь можно будет добавить кнопку "Изменить время" */}
                             </td>
                         </tr>
                     ))}

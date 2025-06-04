@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
+import com.example.demo.entity.Booking;
+import com.example.demo.repository.BookingRepository;
 import com.example.demo.exception.auth.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,12 +27,21 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private BookingRepository bookingRepository;
     @InjectMocks
     private UserService userService;
 
     @Test
     void testFindById_UserExists() {
-        User user = new User(1L, "efim", "efim@mail.ru", "encoded123", true, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User user = new User();
+        user.setId(1L);
+        user.setName("efim");
+        user.setEmail("efim@mail.ru");
+        user.setPassword("encoded123");
+        user.setAuthenticated(true);
+        user.setRole(Role.USER);
+        user.setBookings(new ArrayList<>());
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         User found = userService.findById(1L);
         assertEquals(user, found);
@@ -42,8 +55,19 @@ class UserServiceTest {
 
     @Test
     void testUpdate() {
-        User original = new User(1L, "efim", "efim@mail.ru", "encoded123", true, Role.USER, new ArrayList<>(), new ArrayList<>());
-        User updatedData = new User(null, "egor", "egor@mail.ru", "qwe", true, Role.USER, new ArrayList<>(), new ArrayList<>());
+        User original = new User();
+        original.setId(1L);
+        original.setName("efim");
+        original.setEmail("efim@mail.ru");
+        original.setPassword("encoded123");
+        original.setAuthenticated(true);
+        original.setRole(Role.USER);
+        original.setBookings(new ArrayList<>());
+
+        User updatedData = new User();
+        updatedData.setName("egor");
+        updatedData.setEmail("egor@mail.ru");
+        updatedData.setPassword("qwe");
 
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(original));
         Mockito.when(passwordEncoder.encode("qwe")).thenReturn("encodedQwe");
@@ -66,5 +90,20 @@ class UserServiceTest {
     void testDelete_UserNotFound() {
         Mockito.when(userRepository.existsById(2L)).thenReturn(false);
         assertThrows(UserNotFoundException.class, () -> userService.delete(2L));
+    }
+
+    @Test
+    void testGetBookingsByUserId() {
+        Long userId = 7L;
+        List<Booking> bookings = List.of(
+                new Booking(),
+                new Booking()
+        );
+        Mockito.when(bookingRepository.getAllBookingsByPlaceId(userId)).thenReturn(bookings);
+
+        List<Booking> result = userService.getBookingsByUserId(userId);
+
+        assertEquals(2, result.size());
+        assertSame(bookings, result);
     }
 }

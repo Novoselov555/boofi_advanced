@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,7 @@ public class Place {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "coworking_id", nullable = false)
-    @JsonBackReference
+    @JsonIgnoreProperties({"places", "description"})
     private Coworking coworking;
 
     @Column(nullable = false)
@@ -30,5 +31,6 @@ public class Place {
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @JsonIgnoreProperties("place")
     private List<Booking> bookings;
 }

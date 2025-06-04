@@ -45,12 +45,6 @@ function App() {
                     </PrivateRoute>
                 } />
 
-                {/*<Route path="/booking/:placeId" element={*/}
-                {/*    <PrivateRoute>*/}
-                {/*        <BookingPage />*/}
-                {/*    </PrivateRoute>*/}
-                {/*} />*/}
-
                 <Route path="/my-bookings" element={
                     <PrivateRoute>
                         <MyBookingsPage />
